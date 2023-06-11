@@ -49,6 +49,8 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 3
+            minLength: 3
         - $ref: '#/components/parameters/accept-language'
       responses:
         200:
