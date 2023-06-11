@@ -10,12 +10,12 @@ To run the application, follow these steps:
 2. Make sure you have Java JDK 11 or higher installed.
 3. Open a terminal or command prompt and navigate to the project's root directory.
 4. Run the command `./gradlew bootRun` to start the application.
-5. 4. Run the command `./gradlew check` to run the tests.
+5. Run the command `./gradlew check` to run the tests.
 
 The application will start, and you can access the API endpoints and Swagger UI using the following URLs:
 
 - API endpoints: [http://localhost:8080](http://localhost:8080/travel/locations, http://localhost:8080/travel/locations/{code}/{type})
-- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- Swagger UI: Run the command `./gradlew runSwaggerUI`[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) 
 - H2 Database Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
 To access the H2 Database Console, use the following settings:
@@ -112,3 +112,5 @@ The restful backend should support the following endpoints:
 1) Docker image should be created
 2) Internationilzation should be improved
 3) Pagination and HATEOS should be implemented to handle a large amount of data
+4)Error Handling with Message Bundle to support multiple language has to be implemented
+5)

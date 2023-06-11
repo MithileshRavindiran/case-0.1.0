@@ -15,7 +15,7 @@ public class Application {
 
     @Bean
     @Primary
-    @Profile("!it")
+    @Profile({"!it"})
     DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
             .setType(EmbeddedDatabaseType.H2)

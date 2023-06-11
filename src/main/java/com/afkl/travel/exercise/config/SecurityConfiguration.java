@@ -43,6 +43,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/actuator/health").permitAll()
+                .antMatchers("/actuator/info").permitAll()
                 .antMatchers("/actuator/**").hasAnyRole("ADMIN")
                 .antMatchers("/travel/**").hasAnyRole("USER","ADMIN")
                 .antMatchers(AUTH_WHITELIST).permitAll()
