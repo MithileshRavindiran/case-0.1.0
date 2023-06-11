@@ -18,6 +18,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/h2-console/**"
+            // other public endpoints of your API may be appended to this array
+    };
+
     @Bean
     public UserDetailsService userDetailsService(BCryptPasswordEncoder bCryptPasswordEncoder) {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -38,7 +45,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/actuator/**").hasAnyRole("ADMIN")
                 .antMatchers("/travel/**").hasAnyRole("USER","ADMIN")
-                .antMatchers("/dummy").permitAll()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

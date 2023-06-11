@@ -1,98 +1,75 @@
-Setup
------
+# Travel API Application
 
-### Running the application
+This is a Spring Boot application that provides a RESTful API for retrieving information about airports and locations. It uses an embedded H2 database to store the data and implements the provided OpenAPI specification. The application also includes features such as statistics collection, configurable properties, and a client for consuming the API.
 
-A basic spring boot application is already provided (mainclass: `com.afkl.travel.exercise.Application`).
+## Setup
 
-Either run this in gradle using `./gradlew bootRun` or using the run features from your IDE of choice.
+To run the application, follow these steps:
 
-### Embedded H2 database
+1. Clone the repository to your local machine.
+2. Make sure you have Java JDK 11 or higher installed.
+3. Open a terminal or command prompt and navigate to the project's root directory.
+4. Run the command `./gradlew bootRun` to start the application.
+5. 4. Run the command `./gradlew check` to run the tests.
 
-During application startup an embedded h2 database is started and loaded with location and translation data (schema and example data provided below).   
-You can view the database through the h2 webconsole.   
+The application will start, and you can access the API endpoints and Swagger UI using the following URLs:
 
-Url: [http://localhost:8080/h2-console]   
-Database url: `jdbc:h2:mem:travel-api`   
-Username: `sa` (no password required)   
+- API endpoints: [http://localhost:8080](http://localhost:8080/travel/locations, http://localhost:8080/travel/locations/{code}/{type})
+- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- H2 Database Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
-Assignment
-----------
+To access the H2 Database Console, use the following settings:
+- JDBC URL: `jdbc:h2:mem:travel-api`
+- Username: `sa`
+- Password: (leave empty)
 
-### Implement JPA data access implementation and data layer
+## Application Structure
 
-Implement the domain layer and included the required JPA annotations.
-Implement the data access layer.
+The application is structured using the following packages:
 
-### Implement the provided `OpenApi` specification.
+- `com.afkl.travel.exercise`: The main package containing the application class and configuration.
+- `com.afkl.travel.exercise.config`: The package containing the configuration.
+- `com.afkl.travel.exercise.controller`: Contains the API controllers that handle incoming requests and provide responses.
+- `com.afkl.travel.exercise.entities`: Contains the domain model classes and JPA entities.
+- `com.afkl.travel.exercise.repository`: Contains the data access layer and JPA repositories.
+- `com.afkl.travel.exercise.service`: Contains the business logic and services.
 
-The case includes a specification file named `travel-api.yaml`.
-This can be found in directory `src/main/openapi`.
+## Implementation Details
 
-To view the spec file in `Swagger UI` run the following gradle task:
+### JPA Data Access and Data Layer
 
-```
-./gradlew runSwaggerUI
-```
+The data access layer is implemented using JPA (Java Persistence API) and Spring Data JPA. The domain model classes are mapped to JPA entities using annotations such as `@Entity`, `@Table`, `@Column`, and `@ManyToOne`. The JPA repositories are defined using interfaces that extend `JpaRepository` provided by Spring Data JPA. These repositories provide basic CRUD operations and querying capabilities for the entities.
 
-Note:
-The runSwaggerUI requires that `docker` is installed on your local environment!
+### OpenAPI Specification
 
-Now visit [SwaggerUI](http://localhost:8050)
+The provided OpenAPI specification file `travel-api.yaml` is implemented using SpringFox libraries. The API controllers are implemented according to the specification, with proper request mappings, validations, and responses. The Swagger UI is accessible at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) and provides an interactive interface for testing the API endpoints.
 
-Implement the controllers required to expose this api specification.
-Use the data access layer to retrieve an if necessary filter the data from the database.
+### Security
 
-Note that the api needs to be secured with basic authentication:
-- username: someuser
-- password: psw
+The API is secured with basic authentication using the following credentials:
 
-### Add statistics for your backend
+- Username: someuser
+- Password: userPass
 
-To get some input on our application usage we need to collect and store
-some information from its traffic. Retrieve and store the require values
-below.
+The `/actuator/metrics` endpoint, which exposes the application statistics, is secured with the following credentials:
 
--   Total number of requests processed
--   Total number of requests resulted in an OK response
--   Total number of requests resulted in a 4xx response
--   Total number of requests resulted in a 5xx response
--   Average response time of all requests
--   Max response time of all requests
+- Username: ops
+- Password: adminPass
 
-This information must be exposed in an `/actuator/metrics` API endpoint as JSON.
-This endpoint should not be accessible by normal api consumers and must be secured with:
-- username: ops
-- password: psw
+### Statistics Collection
 
-Note:
-- **Collecting metrics should not impact the user experience in any way.**
-- **It is not required that these metrics survive a container restart**
+The application collects statistics on the incoming requests, including the total number of requests, the number of requests resulting in an OK response, the number of requests resulting in a 4xx response, the number of requests resulting in a 5xx response, the average response time, and the maximum response time. These statistics are exposed through the `/actuator/metrics` API endpoint as JSON. The statistics are collected using Micrometer, which is a metrics collection library integrated with Spring Boot Actuator.These Metrics can be gathered on the endpoint `/actuator/metrics/http.server.requests`
+you can filter metrics like these `/actuator/metrics/http.server.requests?tag=uri:/travel/locations&tag=status:200`
 
-### Make the application configurable
+### Configuration
 
-No hard coded values for things like endpoints, etc. Everything should
-be configurable in some kind of configuration file.
+The application can be configured using a configuration file. The configuration properties are defined in the `application.properties` file. 
 
-### Create a client
-
-Implement a client to consume the API.
-Use the client to retrieve and print all airports from the USA (country code is 'US')
-
-### Bonus points
-
-- dockerize the application
-- Provide a unique ID to each request for tracking purposes and have *every* log line include it before the message.
-
----
-
-API data
---------
 
 ### Database schema
 
 The data exposed by the API is stored in an embedded H2 database.   
-Us JPA mappings to map this data to a domain model.   
+Us JPA mappings to map this data to a domain model.
 
 The structure of the database schema is shown below:
 
@@ -121,43 +98,17 @@ The structure of the database schema is shown below:
       | description varchar            |
       ==================================
       
-### Example data
+### API Endpoints
 
-Locations sample data:
+The restful backend should support the following endpoints:
 
-| id | code | type | longitude | latitude | parent |
-|----|------|------|-----------|----------|--------|
-| 4614|NL|COUNTRY|5.45|52.3|null|
-| 5366|AMS|CITY|4.78417|52.31667|4614|
-| 6412|AMS|AIRPORT|4.76806|52.30833|5366|
+| Method | Path                            | Description                                                                                  |
+|--------|---------------------------------|----------------------------------------------------------------------------------------------|
+| GET    | /travel/locations               | Returns list of all Locations that match the language selected by user                       |
+| GET    | /travel/locations/{code}/{type} | Return a matched location with city/airport/country location type, code and matched language |
 
-Translations sample data:
 
-| id   | location | language | name        | description                           |
-|------|----------|----------|-------------|---------------------------------------|
-| 7131 | 4614     | EN       | Netherlands | Netherlands (NL)                      |
-| 7132 | 4614     | NL       | Nederland   | Nederland (NL)                        |
-| 8635 | 5366     | EN       | Amsterdam   | Amsterdam (AMS)                       |
-| 8636 | 5366     | NL       | Amsterdam   | Amsterdam (AMS)                       |
-| 9970 | 6412     | NL       | Schiphol    | Amsterdam - Schiphol (AMS), Nederland |
-
----
-
-Time limit
-----------
-
-The time limit for the assignment is 4 hours, excluding the time you need for the setup.
-
----
-
-Summary
--------
-
-By no means is the goal to get a solution covering all special cases in
-a 100% robust way. Requiring this would be naive given the time limit!
-It's important that you can explain why you chose your solution instead
-of another.
-
-At least the functionality that you deliver should be error free. What
-you implement and how you do it is subject to your creativity and
-ambition :-). Good luck!
+## Improvements can be done
+1) Docker image should be created
+2) Internationilzation should be improved
+3) Pagination and HATEOS should be implemented to handle a large amount of data
